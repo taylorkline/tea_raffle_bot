@@ -14,15 +14,14 @@ def main():
     authors = set(c.author.name for c in comments)
 
     print(
-        f"There were {len(authors)} unique authors of {len(comments)} comments in the thread.")
-    print(f"Their names are:")
+        f"There are {len(authors)} unique authors of {len(comments)} comments in the thread:")
     print("\n".join(sorted(authors)))
     print()
 
     mods = set(m.name for m in reddit.subreddit(SUBREDDIT).moderator())
     authors = remove_mods(authors, mods)
 
-    # TODO: Further pruning criteria
+    # TODO: Further disqualification / pruning criteria
 
     print(f"The folllowing {len(authors)} users remain qualified:")
     print("\n".join(sorted(authors)))
