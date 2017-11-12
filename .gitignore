@@ -1,4 +1,7 @@
 # The virtual environment
 venv/
 
+# Credentials
+praw.ini
+
 __pycache__/

@@ -1,0 +1,4 @@
+[tearafflebot]
+client_id=aaa
+client_secret=bbb
+user_agent=script:BotName:v0.0 (by /u/AuthorName)
