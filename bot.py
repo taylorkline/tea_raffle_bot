@@ -4,7 +4,6 @@ import random
 import datetime
 
 SUBMISSION_ID = ""
-SUBREDDIT = "tea"
 NUM_WINNERS = 10
 MIN_ACCOUNT_AGE_DAYS = 7
 
@@ -20,7 +19,7 @@ def main():
     print("\n".join(sorted((a.name for a in authors))))
     print()
 
-    mods = set(m for m in reddit.subreddit(SUBREDDIT).moderator())
+    mods = set(m for m in submission.subreddit.moderator())
     authors = remove_mods(authors, mods)
 
     authors = remove_new(authors)
