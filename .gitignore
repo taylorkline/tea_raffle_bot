@@ -5,3 +5,4 @@ venv/
 praw.ini
 
 __pycache__/
+.codeintel
