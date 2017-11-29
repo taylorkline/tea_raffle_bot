@@ -13,8 +13,12 @@ MIN_COMMENTS = 5
 def main():
     reddit = authenticate()
     submission = reddit.submission(SUBMISSION_ID)
+    contest_start = datetime.datetime.fromtimestamp(submission.created_utc)
+
+    comments = submission.comments.replace_more(
+        limit=None)  # Retrieve every single comment
     comments = submission.comments.list()
-    authors = set(c.author for c in comments)
+    authors = {c.author: c.body.replace("\n", " ") for c in comments}
 
     print(
         f"There are {len(authors)} unique authors of {len(comments)} comments in the thread:")
@@ -25,19 +29,21 @@ def main():
     disqualified = dict()
     choose_disqualified(authors, mods, disqualified)
 
-    authors = authors - disqualified.keys()
+    authors = {a: authors[a] for a in authors - disqualified.keys()}
     print(f"{len(authors)} authors remain qualified after the folllowing were removed:")
+    print("author|disqualification")
+    print("------|----------------")
     for author, disqualification_reason in sorted(disqualified.items(), key=lambda x: x[0].name):
-        print(f"{author.name} - {disqualification_reason}")
+        print(f"{author.name}|{disqualification_reason}")
     print()
 
-    print(f"The folllowing {len(authors)} users remain qualified:")
-    print("\n".join(sorted(a.name for a in authors)))
-    print()
-
-    winners = random.sample(authors, k=NUM_WINNERS)
-    print(f"The {len(winners)} winners chosen are:")
-    print("\n".join(sorted(w.name for w in winners)))
+    name_to_comment = {author.name: comment for author,
+                       comment in authors.items()}
+    winners = random.sample(list(authors), k=NUM_WINNERS)
+    print("author|comment")
+    print("------|-------")
+    for name in sorted(w.name for w in winners):
+        print(f"{name}|{name_to_comment[name]}")
 
     # sanity checks
     for winner in winners:
