@@ -17,9 +17,7 @@ def main():
     authors = {c.author: c.body.replace("\n", " ") for c in comments}
 
     print(
-        f"There are {len(authors)} unique authors of {len(comments)} comments in the thread:")
-    print("\n".join(sorted((a.name for a in authors))))
-    print()
+        f"There are {len(authors)} unique authors of {len(comments)} comments in the thread.")
 
     mods = set(m for m in submission.subreddit.moderator())
     disqualified = dict()
