@@ -34,7 +34,7 @@ def main():
     print("author|disqualification")
     print("------|----------------")
     for author, disqualification_reason in sorted(disqualified.items(), key=lambda x: x[0].name):
-        print(f"{author.name}|{disqualification_reason}")
+        print(f"/u/{author.name}|{disqualification_reason}")
     print()
 
     name_to_comment = {author.name: comment for author,
@@ -43,7 +43,7 @@ def main():
     print("author|comment")
     print("------|-------")
     for name in sorted(w.name for w in winners):
-        print(f"{name}|{name_to_comment[name]}")
+        print(f"/u/{name}|{name_to_comment[name]}")
 
     # sanity checks
     for winner in winners:
