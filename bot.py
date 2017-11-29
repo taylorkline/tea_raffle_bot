@@ -71,7 +71,7 @@ def choose_disqualified(authors, mods, disqualified, contest_start, contest_subr
                     break
 
         if not contributed_before_contest:
-            disqualified[author] = "Did not comment or submit to /r/tea before contest date."
+            disqualified[author] = "Did not make a comment or submission before contest date."
             print(f"disqualified: {disqualified[author]}")
             continue
 
