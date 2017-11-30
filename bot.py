@@ -13,11 +13,11 @@ def main():
 
     comments = submission.comments.replace_more(
         limit=None)  # Retrieve every single comment
-    comments = submission.comments.list()
+    comments = list(submission.comments)  # list(...) will give ONLY top-level comments. Intentional per contest rules.
     authors = {c.author: c.body.replace("\n", " ") for c in comments}
 
     print(
-        f"There are {len(authors)} unique authors of {len(comments)} comments in the thread.")
+        f"There are {len(authors)} unique authors of {len(comments)} top-level comments in the thread.")
 
     mods = set(m for m in submission.subreddit.moderator())
     disqualified = dict()
@@ -25,7 +25,7 @@ def main():
                         datetime.datetime.fromtimestamp(submission.created_utc), submission.subreddit)
 
     authors = {a: authors[a] for a in authors - disqualified.keys()}
-    print(f"{len(authors)} authors remain qualified after the folllowing were removed:")
+    print(f"{len(authors)} authors remain qualified after the folllowing {len(disqualified)} authors were disqualified:")
     print("author|disqualification")
     print("------|----------------")
     for author, disqualification_reason in sorted(disqualified.items(), key=lambda x: x[0].name):
@@ -35,6 +35,7 @@ def main():
     name_to_comment = {author.name: comment for author,
                        comment in authors.items()}
     winners = random.sample(list(authors), k=NUM_WINNERS)
+    print(f"And the {len(winners)} winners are:")
     print("author|comment")
     print("------|-------")
     for name in sorted(w.name for w in winners):
