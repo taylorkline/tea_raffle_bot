@@ -6,6 +6,9 @@ import datetime
 SUBMISSION_ID = ""
 NUM_WINNERS = 10
 
+# for example, users who entered by accident
+EXCLUDED_USERNAMES = set(["puerh_lover"])
+
 
 def main():
     reddit = authenticate()
@@ -13,8 +16,12 @@ def main():
 
     comments = submission.comments.replace_more(
         limit=None)  # Retrieve every single comment
-    comments = list(submission.comments)  # list(...) will give ONLY top-level comments. Intentional per contest rules.
-    authors = {c.author: c.body.replace("\n", " ") for c in comments}
+    # list(...) will give ONLY top-level comments. Intentional per contest rules.
+    comments = list(submission.comments)
+    excluded_authors = set(reddit.redditor(name)
+                           for name in EXCLUDED_USERNAMES)
+    authors = {c.author: c.body.replace(
+        "\n", " ") for c in comments if c.author not in excluded_authors}
 
     print(
         f"There are {len(authors)} unique authors of {len(comments)} top-level comments in the thread.")
