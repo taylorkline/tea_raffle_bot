@@ -3,17 +3,20 @@ import pdb
 import random
 import datetime
 
-SUBMISSION_ID = ""
-NUM_WINNERS = 10
+SUBMISSION_ID = "7foq2r"
+PRIZES_TABLE_PATH = "prizes.md"
 
 # for example, users who entered by accident
 EXCLUDED_USERNAMES = set(["puerh_lover"])
 
 
 def main():
+    num_prizes = read_table(PRIZES_TABLE_PATH)
+    assert(num_prizes > 0)
+    print(f"{num_prizes} prizes are available.")
+
     reddit = authenticate()
     submission = reddit.submission(SUBMISSION_ID)
-
     comments = submission.comments.replace_more(
         limit=None)  # Retrieve every single comment
     # list(...) will give ONLY top-level comments. Intentional per contest rules.
@@ -41,15 +44,27 @@ def main():
 
     name_to_comment = {author.name: comment for author,
                        comment in authors.items()}
-    winners = random.sample(list(authors), k=NUM_WINNERS)
+    winning_pool = random.sample(list(authors), k=num_prizes * 2)
+    winners = winning_pool[:num_prizes]
+    runner_ups = winning_pool[num_prizes:]
+    assert(len(winners) == num_prizes)
+
     print(f"And the {len(winners)} winners are:")
-    print("author|comment")
-    print("------|-------")
-    for name in sorted(w.name for w in winners):
-        print(f"/u/{name}|{name_to_comment[name]}")
+    print("#|author|comment")
+    print("-|------|-------")
+    for rank, w in enumerate(winners):
+        print(f"{rank + 1}|/u/{w.name}|{name_to_comment[w.name]}")
+    del winners
+
+    print(f"And the {len(runner_ups)} runner ups (for Reddit Gold and backups due to shipping restrictions, etc.) are:")
+    print("#|author|comment")
+    print("-|------|-------")
+    for rank, ru in enumerate(runner_ups):
+        print(f"{rank + 1}|/u/{ru.name}|{name_to_comment[ru.name]}")
+    del runner_ups
 
     # sanity checks
-    for winner in winners:
+    for winner in winning_pool:
         assert(winner in authors)
         assert(winner not in mods)
         assert(winner not in disqualified)
@@ -84,6 +99,18 @@ def choose_disqualified(authors, mods, disqualified, contest_start, contest_subr
             continue
 
         print("ok")
+
+
+def read_table(path):
+    num_prizes = 0
+    with open(path) as f:
+        # discard header data
+        f.readline()
+        f.readline()
+
+        for prizes_by_vendor in map(lambda line: int(line.split("|")[-1]), f.readlines()):
+            num_prizes += prizes_by_vendor
+    return num_prizes
 
 
 def authenticate():
