@@ -24,7 +24,7 @@ def main():
     excluded_authors = set(reddit.redditor(name)
                            for name in EXCLUDED_USERNAMES)
     authors = {c.author: c.body.replace(
-        "\n", " ") for c in comments if c.author not in excluded_authors}
+        "\n", " ") for c in comments if c.author not in excluded_authors and c.author is not None}
 
     print(
         f"There are {len(authors)} unique authors of {len(comments)} top-level comments in the thread.")
